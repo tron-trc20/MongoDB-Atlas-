@@ -22,7 +22,8 @@ const nextConfig = {
       type: 'asset/resource'
     });
     return config;
-  }
+  },
+  basePath: '/red-packet-platform',
 };
 
 module.exports = nextConfig; 
