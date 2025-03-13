@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1741599953469",
+    "username": "1111",
+    "password": "1111",
+    "level": 2,
+    "status": "active",
+    "createdAt": "2025-03-10T09:45:53.469Z",
+    "source": "admin",
+    "commissionRate": 50
+  },
+  {
+    "id": "1741601823221",
+    "username": "333",
+    "password": "333",
+    "level": 3,
+    "status": "active",
+    "createdAt": "2025-03-10T10:17:03.221Z",
+    "source": "admin",
+    "commissionRate": 20
+  },
+  {
+    "id": "1741601873945",
+    "username": "444",
+    "password": "444",
+    "level": 4,
+    "status": "active",
+    "createdAt": "2025-03-10T10:17:53.945Z",
+    "source": "admin",
+    "commissionRate": 50
+  },
+  {
+    "id": "1741608979501",
+    "username": "1",
+    "password": "1",
+    "level": 2,
+    "status": "active",
+    "createdAt": "2025-03-10T12:16:19.501Z",
+    "source": "admin",
+    "commissionRate": 50
+  }
+]

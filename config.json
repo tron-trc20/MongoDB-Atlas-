@@ -1,0 +1,21 @@
+{
+  "site": {
+    "domain": "example.com",
+    "port": 3000,
+    "ssl": {
+      "enabled": false,
+      "cert": "/path/to/cert.pem",
+      "key": "/path/to/key.pem"
+    }
+  },
+  "payment": {
+    "usdt": {
+      "address": "TNE7mTdTQmYgy8ZgsxUkYeYVH6BnjKFzAU",
+      "rate": 7.2
+    }
+  },
+  "database": {
+    "type": "json",
+    "path": "./data"
+  }
+} 
