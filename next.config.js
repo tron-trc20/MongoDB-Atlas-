@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
   images: {
     unoptimized: true,
     disableStaticImages: false,
@@ -22,8 +21,7 @@ const nextConfig = {
       type: 'asset/resource'
     });
     return config;
-  },
-  basePath: '/red-packet-platform',
+  }
 };
 
 module.exports = nextConfig; 
