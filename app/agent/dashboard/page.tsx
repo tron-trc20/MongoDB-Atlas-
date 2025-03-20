@@ -25,6 +25,7 @@ interface Agent {
   earnings?: {
     total: number;
     count: number;
+    rate: number;
   };
 }
 
@@ -677,7 +678,7 @@ export default function Dashboard() {
                     ¥{transaction.amount.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ¥{transaction.amount * agent?.earnings?.rate || 0}
+                    ¥{transaction.amount * (agent?.earnings?.rate || 0)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {transaction.amount > 0 ? '充值' : '提现'}
