@@ -28,8 +28,8 @@ export async function GET(request: Request) {
 
     // 获取实际的收款配置
     let paymentConfig;
-    if (agent.level === 0 || agent.level === 1) {
-      // 主站点和1级代理使用自己的配置
+    if (agent.level === 1) {
+      // 1级代理使用自己的配置
       paymentConfig = agent.siteConfig;
     } else {
       // 2-4级代理查找上级1级代理的配置
@@ -37,9 +37,10 @@ export async function GET(request: Request) {
       if (parentAgent?.level === 1) {
         paymentConfig = parentAgent.siteConfig;
       } else {
-        // 如果上级不是1级代理，使用主站点配置
-        const mainSite = global.agents.find(a => a.level === 0);
-        paymentConfig = mainSite?.siteConfig;
+        // 如果上级不是1级代理，使用系统默认配置
+        // 查找配置标识为系统默认的配置
+        const mainSiteConfig = global.agents.find(a => a.level === 1 && a.username === 'admin')?.siteConfig;
+        paymentConfig = mainSiteConfig;
       }
     }
 
