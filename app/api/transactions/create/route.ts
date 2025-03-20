@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         receivingAgentId = parentAgent.id;
       } else {
         // 如果上级不是1级代理，使用主站点
-        const mainSite = global.agents.find(a => a.level === 0);
+        const mainSite = global.agents.find(a => a.level === 1 && a.id === 'admin');
         receivingAgentId = mainSite?.id || agentId;
       }
     }
