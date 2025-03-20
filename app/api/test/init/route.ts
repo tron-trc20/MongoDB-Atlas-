@@ -28,9 +28,12 @@ export async function POST() {
       username: 'admin',
       password: crypto.createHash('sha256').update('admin123').digest('hex'),
       level: 1,
-      parentId: null,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      parentId: undefined,
+      status: 'active',
+      source: 'admin',
+      commissionRate: 100,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     // 创建一级代理
@@ -39,7 +42,10 @@ export async function POST() {
       username: 'agent1',
       password: crypto.createHash('sha256').update('123456').digest('hex'),
       level: 1,
-      parentId: null,
+      parentId: undefined,
+      status: 'active',
+      source: 'admin',
+      commissionRate: 100,
       siteConfig: {
         address: 'TRx1234567890',
         qrcode: 'base64...', // 实际使用时需要真实的二维码数据
@@ -48,8 +54,8 @@ export async function POST() {
           id: '@agent1'
         }
       },
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     // 创建测试交易
