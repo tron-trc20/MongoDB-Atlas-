@@ -32,7 +32,9 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['mongoose']
   },
-  trailingSlash: true,
+  reactStrictMode: true,
+  distDir: '.next',
+  staticPageGenerationTimeout: 1000,
   async headers() {
     return [
       {
@@ -45,7 +47,8 @@ const nextConfig = {
         ],
       },
     ];
-  }
+  },
+  exportPathMap: null,
 };
 
 module.exports = nextConfig; 
