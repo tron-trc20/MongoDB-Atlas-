@@ -33,17 +33,19 @@ export interface Agent {
   id: string;
   username: string;
   password: string;
-  level: 2 | 3 | 4;
+  level: 1 | 2 | 3 | 4;
   status: AgentStatus;
   source: AgentSource;
   commissionRate: number;
   createdAt: string;
+  siteConfig?: SiteConfig;
+  parentId?: string;
 }
 
 // 代理配置
 export interface AgentConfig {
   username: string;
-  level: 2 | 3 | 4;
+  level: 1 | 2 | 3 | 4;
   status: AgentStatus;
   commissionRate: number;
   createdAt: string;
