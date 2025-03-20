@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 // 主站点配置
 const mainSiteConfig = {
@@ -12,14 +14,23 @@ const mainSiteConfig = {
 
 export async function GET() {
   try {
-    return NextResponse.json({
-      success: true,
-      data: mainSiteConfig
-    });
-  } catch (error) {
-    console.error('Error in GET /api/site/config:', error);
+    const configPath = join(process.cwd(), 'config.json');
+    const config = JSON.parse(readFileSync(configPath, 'utf8'));
+
     return NextResponse.json(
-      { success: false, message: '获取主站点配置失败' },
+      { success: true, data: config },
+      {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      }
+    );
+  } catch (error) {
+    console.error('获取配置失败:', error);
+    return NextResponse.json(
+      { success: false, message: '获取配置失败' },
       { status: 500 }
     );
   }

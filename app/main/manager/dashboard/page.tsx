@@ -38,15 +38,30 @@ interface Transaction {
   commission: number;
 }
 
+interface SiteConfig {
+  customerService: {
+    url: string;
+    id: string;
+  };
+  usdtRate: number;
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('agents'); // agents, users, transactions
+  const [activeTab, setActiveTab] = useState('agents'); // agents, users, transactions, settings
   const [agents, setAgents] = useState<Agent[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string>('all');
+  const [siteConfig, setSiteConfig] = useState<SiteConfig>({
+    customerService: {
+      url: '',
+      id: ''
+    },
+    usdtRate: 7.2
+  });
 
   // 新建代理表单
   const [newAgentForm, setNewAgentForm] = useState({
@@ -62,6 +77,7 @@ export default function AdminDashboard() {
       router.replace('/main/manager/login');
     } else {
       fetchData();
+      fetchSiteConfig();
     }
   }, [router]);
 
@@ -241,6 +257,49 @@ export default function AdminDashboard() {
     }
   };
 
+  // 获取站点配置
+  const fetchSiteConfig = async () => {
+    try {
+      const res = await fetch('/api/site/config', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSiteConfig(data.data);
+      }
+    } catch (err) {
+      setError('获取站点配置失败');
+    }
+  };
+
+  // 更新站点配置
+  const handleUpdateSiteConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/admin/site-config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
+        body: JSON.stringify(siteConfig)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert('配置更新成功');
+        // 重新获取最新配置
+        fetchSiteConfig();
+      } else {
+        setError(data.message || '更新失败');
+      }
+    } catch (err) {
+      setError('更新站点配置失败');
+    }
+  };
+
   if (loading) {
     return <div className="text-center p-4">加载中...</div>;
   }
@@ -255,11 +314,53 @@ export default function AdminDashboard() {
               <div className="flex-shrink-0 flex items-center">
                 <h1 className="text-xl font-bold text-gray-900">管理后台</h1>
               </div>
+              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <button
+                  onClick={() => setActiveTab('agents')}
+                  className={`${
+                    activeTab === 'agents'
+                      ? 'border-blue-500 text-gray-900'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  代理管理
+                </button>
+                <button
+                  onClick={() => setActiveTab('users')}
+                  className={`${
+                    activeTab === 'users'
+                      ? 'border-blue-500 text-gray-900'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  用户管理
+                </button>
+                <button
+                  onClick={() => setActiveTab('transactions')}
+                  className={`${
+                    activeTab === 'transactions'
+                      ? 'border-blue-500 text-gray-900'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  交易记录
+                </button>
+                <button
+                  onClick={() => setActiveTab('settings')}
+                  className={`${
+                    activeTab === 'settings'
+                      ? 'border-blue-500 text-gray-900'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  网站设置
+                </button>
+              </div>
             </div>
             <div className="flex items-center">
               <button
                 onClick={handleLogout}
-                className="ml-4 px-4 py-2 text-sm text-red-600 hover:text-red-900"
+                className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 退出登录
               </button>
@@ -622,6 +723,88 @@ export default function AdminDashboard() {
                   ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* 网站设置面板 */}
+        {activeTab === 'settings' && (
+          <div className="bg-white shadow rounded-lg p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-4">网站设置</h2>
+            <form onSubmit={handleUpdateSiteConfig} className="space-y-6">
+              <div>
+                <h3 className="text-md font-medium text-gray-900 mb-2">客服设置</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      客服链接
+                    </label>
+                    <input
+                      type="text"
+                      value={siteConfig.customerService.url}
+                      onChange={(e) =>
+                        setSiteConfig({
+                          ...siteConfig,
+                          customerService: {
+                            ...siteConfig.customerService,
+                            url: e.target.value
+                          }
+                        })
+                      }
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      客服ID
+                    </label>
+                    <input
+                      type="text"
+                      value={siteConfig.customerService.id}
+                      onChange={(e) =>
+                        setSiteConfig({
+                          ...siteConfig,
+                          customerService: {
+                            ...siteConfig.customerService,
+                            id: e.target.value
+                          }
+                        })
+                      }
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-md font-medium text-gray-900 mb-2">USDT汇率设置</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    USDT汇率 (1 USDT = ? CNY)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={siteConfig.usdtRate}
+                    onChange={(e) =>
+                      setSiteConfig({
+                        ...siteConfig,
+                        usdtRate: parseFloat(e.target.value)
+                      })
+                    }
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  保存设置
+                </button>
+              </div>
+            </form>
           </div>
         )}
       </div>

@@ -17,5 +17,10 @@
   "database": {
     "type": "json",
     "path": "./data"
-  }
-} 
+  },
+  "customerService": {
+    "url": "https://t.me/Juyy2",
+    "id": "@juyy21"
+  },
+  "usdtRate": 7.2
+}

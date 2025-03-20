@@ -1,0 +1,12 @@
+{
+  "title": "返现网站",
+  "logo": "/images/logo.png",
+  "customerServiceUrl": "https://t.me/Juyy2",
+  "customerServiceText": "在线客服",
+  "customerServiceQQ": "123456789",
+  "customerServiceWechat": "wxid_123456",
+  "customerServiceTelegram": "123",
+  "usdtRate": 7.2,
+  "usdtAddress": "TNE7mTdTQmYgy8ZgsxUkYeYVH6BnjKFzAU",
+  "usdtNetwork": "TRC20"
+}

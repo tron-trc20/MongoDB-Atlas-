@@ -14,14 +14,23 @@ interface PaymentInfo {
   account: string;
 }
 
+interface SiteConfig {
+  customerService: {
+    url: string;
+    id: string;
+  };
+  usdtRate: number;
+}
+
 export default function Payment() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [copiedType, setCopiedType] = useState<'account' | 'amount' | null>(null);
+  const [copiedType, setCopiedType] = useState<'account' | 'amount' | 'customerService' | null>(null);
   const [address, setAddress] = useState('');
   const [isConfirming, setIsConfirming] = useState(false);
+  const [config, setConfig] = useState<SiteConfig | null>(null);
   
   const amount = Number(searchParams.get('amount'));
   const redPacketAmount = Number(searchParams.get('redPacketAmount'));
@@ -38,7 +47,7 @@ export default function Payment() {
         }
 
         // 获取支付配置
-        const res = await fetch('/api/site/payment-config');
+        const res = await fetch('/api/site/config');
         if (!res.ok) {
           throw new Error('获取支付配置失败');
         }
@@ -47,6 +56,8 @@ export default function Payment() {
         if (!data.success) {
           throw new Error(data.message || '获取支付配置失败');
         }
+
+        setConfig(data.data);
 
         // 创建支付订单
         const paymentRes = await fetch('/api/payment/create', {
@@ -85,7 +96,7 @@ export default function Payment() {
     initPayment();
   }, [amount, redPacketAmount, account, orderId, type]);
 
-  const copyToClipboard = async (text: string, type: 'account' | 'amount') => {
+  const copyToClipboard = async (text: string, type: 'account' | 'amount' | 'customerService') => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedType(type);
@@ -144,6 +155,46 @@ export default function Payment() {
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
+        {/* 客服联系方式 - 始终显示在最上方 */}
+        {config && (
+          <div className="bg-white shadow rounded-lg p-6 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                </svg>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">在线客服</h2>
+                  <div className="flex items-center mt-1">
+                    <p className="text-gray-500 text-sm">客服联系方式telegramID: </p>
+                    <button
+                      onClick={() => copyToClipboard(config.customerService.id, 'customerService')}
+                      className="text-blue-500 hover:text-blue-600 text-sm ml-1 flex items-center"
+                    >
+                      {config.customerService.id}
+                      {copiedType === 'customerService' && (
+                        <span className="text-green-500 text-xs ml-2">已复制!</span>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <a
+                href={config.customerService.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 text-base font-medium flex items-center"
+              >
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 16h2v-6h-2v6zm0-8h2V8h-2v2z"/>
+                </svg>
+                联系客服
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* 支付信息卡片 */}
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <div className="p-6">
             {!isConfirming ? (
@@ -151,8 +202,14 @@ export default function Payment() {
                 <div className="text-center mb-6">
                   <p className="text-gray-600 text-sm">订单编号：{orderId}</p>
                   <div className="mt-2">
-                    <p className="text-red-600 font-bold text-xl">口令红包金额：¥{redPacketAmount.toFixed(2)}</p>
-                    <p className="text-blue-600 font-bold mt-1">实际支付金额：¥{amount.toFixed(2)}</p>
+                    {type === 'redPacket' ? (
+                      <>
+                        <p className="text-red-600 font-bold text-xl">口令红包金额：¥{redPacketAmount.toFixed(2)}</p>
+                        <p className="text-blue-600 font-bold mt-1">实际支付金额：¥{amount.toFixed(2)}</p>
+                      </>
+                    ) : (
+                      <p className="text-blue-600 font-bold text-xl">支付金额：¥{amount.toFixed(2)}</p>
+                    )}
                   </div>
                 </div>
 
