@@ -1,18 +1,9 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { Transaction } from '@/app/models/agent';
 
 declare global {
-  var transactions: Array<{
-    id: string;
-    amount: number;
-    agentId: string; // 接收转账的代理ID
-    status: 'pending' | 'confirmed' | 'rejected';
-    customerView: 'pending'; // 客户视图始终显示pending
-    createdAt: Date;
-    confirmedAt?: Date;
-    confirmedBy?: string;
-    remarks?: string;
-  }>;
+  var transactions: Transaction[];
 }
 
 // 初始化全局变量
