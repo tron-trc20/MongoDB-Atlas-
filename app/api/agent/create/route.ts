@@ -70,10 +70,13 @@ export async function POST(request: Request) {
       username,
       password: crypto.createHash('sha256').update(password).digest('hex'),
       level,
+      status: 'active',
+      source: 'agent',
+      commissionRate: 0,
       inviteCode,
       parentId: parentAgentId,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     // 如果是1级代理，继承父级代理的配置

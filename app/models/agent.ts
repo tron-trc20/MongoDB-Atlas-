@@ -38,6 +38,8 @@ export interface Agent {
   source: AgentSource;
   commissionRate: number;
   createdAt: string;
+  updatedAt?: string;
+  inviteCode?: string;
   siteConfig?: SiteConfig;
   parentId?: string;
 }
