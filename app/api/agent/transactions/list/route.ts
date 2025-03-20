@@ -3,6 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { Agent } from '@/app/models/agent';
 
+// 定义Transaction接口
+interface Transaction {
+  agentId: string;
+  [key: string]: any;
+}
+
 // 获取所有下级代理ID
 function getAllSubAgentIds(agents: Agent[], currentAgent: Agent): string[] {
   const subAgentIds = agents
@@ -44,13 +50,13 @@ export async function GET(request: NextRequest) {
 
     // 读取交易记录
     const transactionsPath = path.join(process.cwd(), 'data/transactions.json');
-    let transactions = [];
+    let transactions: Transaction[] = [];
     if (fs.existsSync(transactionsPath)) {
       transactions = JSON.parse(fs.readFileSync(transactionsPath, 'utf-8'));
     }
 
     // 过滤出相关交易
-    const relevantTransactions = transactions.filter(tx => {
+    const relevantTransactions = transactions.filter((tx: Transaction) => {
       return tx.agentId === agentUsername || subAgentIds.includes(tx.agentId);
     });
 

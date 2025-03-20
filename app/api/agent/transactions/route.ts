@@ -5,15 +5,19 @@ import fs from 'fs';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 
+// 定义Transaction接口
+interface Transaction {
+  id: string;
+  agentId: string;
+  amount: number;
+  status: 'pending' | 'completed' | 'rejected';
+  createdAt: Date | string;
+  completedAt?: Date | string;
+  [key: string]: any;
+}
+
 declare global {
-  var agentTransactions: Array<{
-    id: string;
-    agentId: string;
-    amount: number;
-    status: 'pending' | 'completed' | 'rejected';
-    createdAt: Date;
-    completedAt?: Date;
-  }>;
+  var agentTransactions: Transaction[];
 }
 
 // 初始化全局变量
@@ -49,10 +53,10 @@ export async function GET(request: Request) {
       });
     }
 
-    const transactions = JSON.parse(fs.readFileSync(transactionsPath, 'utf-8'));
+    const transactions: Transaction[] = JSON.parse(fs.readFileSync(transactionsPath, 'utf-8'));
     
     // 过滤出当前代理的交易记录
-    const agentTransactions = transactions.filter((t: any) => 
+    const agentTransactions = transactions.filter((t: Transaction) => 
       t.agentId === decoded.id
     );
 
@@ -93,11 +97,11 @@ export async function POST(request: Request) {
     }
 
     // 创建新交易
-    const transaction = {
+    const transaction: Transaction = {
       id: crypto.randomBytes(16).toString('hex'),
       agentId,
       amount,
-      status: 'pending' as const,
+      status: 'pending',
       createdAt: new Date()
     };
 
