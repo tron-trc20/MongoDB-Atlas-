@@ -30,11 +30,12 @@ const nextConfig = {
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET
   },
   experimental: {
-    serverComponentsExternalPackages: ['mongoose']
+    serverComponentsExternalPackages: ['mongoose'],
+    disableOptimizedLoading: true,
+    optimizeCss: false
   },
   reactStrictMode: true,
-  distDir: '.next',
-  staticPageGenerationTimeout: 1000,
+  staticPageGenerationTimeout: 180,
   async headers() {
     return [
       {
@@ -48,7 +49,6 @@ const nextConfig = {
       },
     ];
   },
-  exportPathMap: null,
 };
 
 module.exports = nextConfig; 
