@@ -2,8 +2,15 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getConfig } from '../../config/crypto';
 import Image from 'next/image';
+
+// 临时getConfig函数替代
+const getConfig = () => {
+  return {
+    address: 'TYQraWpB5VsfuaAKCG6G9GHKnM3hCm5JUt',
+    network: 'TRC20'
+  };
+};
 
 const generateOrderNumber = () => {
   const timestamp = new Date().getTime();

@@ -1,85 +1,63 @@
-# 红包平台部署指南
+# 返现网站
 
-## 系统要求
+这是一个基于Next.js和MongoDB的返现网站项目。
 
-- Node.js 18.x 或更高版本
-- MongoDB 4.x 或更高版本
-- PM2 (全局安装)
+## 功能特点
 
-## 一键部署步骤
+- 用户注册和登录
+- 红包创建和领取
+- 订单管理
+- 系统配置管理
 
-1. 将项目文件上传到服务器
+## 技术栈
 
+- Next.js 14
+- React 18
+- MongoDB Atlas
+- TypeScript
+- TailwindCSS
+
+## 本地开发
+
+1. 克隆项目
 ```bash
-git clone https://github.com/your-username/red-packet-platform.git
-cd red-packet-platform
+git clone https://github.com/yourusername/red-packet-website.git
+cd red-packet-website
 ```
 
-2. 赋予部署脚本执行权限
-
+2. 安装依赖
 ```bash
-chmod +x deploy.sh
+npm install
 ```
 
-3. 运行部署脚本
-
+3. 配置环境变量
 ```bash
-./deploy.sh
+cp .env.example .env.local
+# 编辑 .env.local 文件，填入必要的环境变量
 ```
 
-部署脚本会自动：
-- 检查并安装必要的系统依赖
-- 配置环境变量
-- 安装项目依赖
-- 构建项目
-- 启动服务
-
-## 手动配置（如需要）
-
-1. 修改配置文件 `deploy.config.js`
-2. 修改环境变量文件 `.env.local`
-
-## 常用命令
-
+4. 启动开发服务器
 ```bash
-# 查看服务状态
-pm2 status
-
-# 查看日志
-pm2 logs red-packet-platform
-
-# 重启服务
-pm2 restart red-packet-platform
-
-# 停止服务
-pm2 stop red-packet-platform
+npm run dev
 ```
 
-## 目录结构
+## 部署
 
-```
-red-packet-platform/
-├── app/                # 主应用代码
-├── public/            # 静态资源
-├── deploy.config.js   # 部署配置
-├── deploy.sh          # 部署脚本
-├── package.json       # 项目依赖
-└── README.md          # 说明文档
-```
+本项目使用Render进行部署。部署步骤：
 
-## 注意事项
+1. 在Render上创建新的Web Service
+2. 连接GitHub仓库
+3. 配置环境变量
+4. 设置构建命令：`npm run build`
+5. 设置启动命令：`npm start`
 
-1. 确保服务器防火墙允许应用端口访问
-2. 建议使用 HTTPS 协议（需要配置 SSL 证书）
-3. 定期备份数据库
-4. 及时更新系统安全补丁
+## 环境变量
 
-## 常见问题
+- `MONGODB_URI`: MongoDB连接字符串
+- `JWT_SECRET`: JWT密钥
+- `NEXTAUTH_URL`: NextAuth.js的URL
+- `NEXTAUTH_SECRET`: NextAuth.js的密钥
 
-1. 如果遇到权限问题，请使用 sudo 运行部署脚本
-2. 如果端口被占用，可以在部署时选择其他端口
-3. 如果服务无法启动，请检查日志：`pm2 logs`
+## 许可证
 
-## 技术支持
-
-如有问题，请联系技术支持。 
+MIT 
