@@ -16,38 +16,12 @@ export default async function connectDb() {
 
   try {
     console.log('正在连接MongoDB...');
-    console.log('MongoDB URI:', MONGODB_URI.replace(/\/\/[^:]+:[^@]+@/, '//****:****@')); // 安全地打印URI
-    
-    const db = await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // 超时时间
-      socketTimeoutMS: 45000, // Socket超时
-    });
-
+    const db = await mongoose.connect(MONGODB_URI);
     isConnected = db.connections[0].readyState === 1;
-    
-    if (isConnected) {
-      console.log('MongoDB连接成功!');
-      console.log('数据库名称:', db.connection.db.databaseName);
-      console.log('连接状态:', db.connection.readyState);
-    } else {
-      console.error('MongoDB连接失败：连接状态异常');
-      throw new Error('MongoDB连接失败：连接状态异常');
-    }
+    console.log('MongoDB连接成功!');
   } catch (error) {
     console.error('MongoDB连接失败：', error);
     isConnected = false;
     throw error;
   }
-
-  mongoose.connection.on('error', (err) => {
-    console.error('MongoDB连接错误：', err);
-    isConnected = false;
-  });
-
-  mongoose.connection.on('disconnected', () => {
-    console.log('MongoDB连接断开');
-    isConnected = false;
-  });
 } 
