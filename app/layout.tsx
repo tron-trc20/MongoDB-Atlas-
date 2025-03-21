@@ -3,8 +3,9 @@ import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 
-// 禁用静态生成，强制使用服务器端渲染
+// 添加动态配置，确保页面不被静态生成
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata = {
   title: '支付宝口令红包',

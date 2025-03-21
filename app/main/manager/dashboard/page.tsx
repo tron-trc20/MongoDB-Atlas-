@@ -260,7 +260,10 @@ export default function AdminDashboard() {
   // 获取站点配置
   const fetchSiteConfig = async () => {
     try {
-      const res = await fetch('/api/site/config', {
+      setLoading(true);
+      const timestamp = new Date().getTime(); // 添加时间戳防止缓存
+      const res = await fetch(`/api/site/config?t=${timestamp}`, {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
           'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -272,10 +275,16 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (data.success) {
+        console.log("获取到的站点配置:", data.data);
         setSiteConfig(data.data);
+      } else {
+        setError(data.message || '获取配置失败');
       }
     } catch (err) {
+      console.error("获取站点配置出错:", err);
       setError('获取站点配置失败');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -283,11 +292,14 @@ export default function AdminDashboard() {
   const handleUpdateSiteConfig = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setLoading(true);
+      console.log("提交的配置数据:", siteConfig);
       const res = await fetch('/api/admin/site-config', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
         },
         body: JSON.stringify(siteConfig)
       });
@@ -301,7 +313,10 @@ export default function AdminDashboard() {
         setError(data.message || '更新失败');
       }
     } catch (err) {
+      console.error("更新站点配置出错:", err);
       setError('更新站点配置失败');
+    } finally {
+      setLoading(false);
     }
   };
 

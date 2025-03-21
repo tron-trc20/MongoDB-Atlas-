@@ -49,6 +49,10 @@ const nextConfig = {
       },
     ];
   },
+  distDir: '.next',
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
+  poweredByHeader: false,
 };
 
 module.exports = nextConfig; 
