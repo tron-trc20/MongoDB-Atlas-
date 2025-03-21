@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import connectDb from '@/utils/connectDb';
 import { verifyToken } from '@/app/utils/auth';
+
+// 导入SiteConfig模型
+const SiteConfig = require('@/models/SiteConfig');
 
 export async function POST(request: Request) {
   try {
@@ -26,21 +28,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: '参数不完整' }, { status: 400 });
     }
 
-    // 读取现有配置
-    const configPath = join(process.cwd(), 'config.json');
-    const currentConfig = JSON.parse(readFileSync(configPath, 'utf8'));
+    // 连接数据库
+    await connectDb();
 
     // 更新配置
-    const newConfig = {
-      ...currentConfig,
+    await SiteConfig.updateConfig({
       customerService,
-      usdtRate
-    };
+      usdtRate,
+      payment: {
+        usdt: {
+          rate: usdtRate
+        }
+      }
+    });
 
-    // 保存配置
-    writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
-
-    return NextResponse.json({ success: true, message: '配置更新成功' });
+    return NextResponse.json({ 
+      success: true, 
+      message: '配置更新成功',
+      data: { customerService, usdtRate }
+    });
   } catch (error) {
     console.error('更新站点配置失败:', error);
     return NextResponse.json(

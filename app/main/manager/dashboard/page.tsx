@@ -262,8 +262,13 @@ export default function AdminDashboard() {
     try {
       const res = await fetch('/api/site/config', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-        }
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        cache: 'no-store',
+        next: { revalidate: 0 }
       });
       const data = await res.json();
       if (data.success) {
@@ -290,8 +295,8 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (data.success) {
         alert('配置更新成功');
-        // 重新获取最新配置
-        fetchSiteConfig();
+        // 强制重新获取最新配置
+        await fetchSiteConfig();
       } else {
         setError(data.message || '更新失败');
       }

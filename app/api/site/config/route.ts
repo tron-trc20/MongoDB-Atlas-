@@ -1,24 +1,26 @@
 import { NextResponse } from 'next/server';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import connectDb from '@/utils/connectDb';
 
-// 主站点配置
-const mainSiteConfig = {
-  address: '主站点收款地址',
-  qrcode: '主站点二维码',
-  customerService: {
-    url: 'https://t.me/Juyy2',
-    id: 'juyy2'
-  }
-};
+// 导入SiteConfig模型
+const SiteConfig = require('@/models/SiteConfig');
 
 export async function GET() {
   try {
-    const configPath = join(process.cwd(), 'config.json');
-    const config = JSON.parse(readFileSync(configPath, 'utf8'));
+    // 连接数据库
+    await connectDb();
+    
+    // 从数据库获取配置
+    const config = await SiteConfig.getConfig();
+    
+    // 转换为前端需要的格式
+    const responseData = {
+      customerService: config.customerService,
+      usdtRate: config.usdtRate,
+      payment: config.payment
+    };
 
     return NextResponse.json(
-      { success: true, data: config },
+      { success: true, data: responseData },
       {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',

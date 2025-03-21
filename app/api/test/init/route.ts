@@ -22,6 +22,20 @@ export async function POST() {
     global.agents = [];
     global.transactions = [];
 
+    // 初始化SiteConfig
+    try {
+      const SiteConfig = require('@/models/SiteConfig');
+      const connectDb = require('@/utils/connectDb').default;
+      
+      await connectDb();
+      
+      // 获取或创建站点配置
+      const config = await SiteConfig.getConfig();
+      console.log('初始化站点配置成功:', config);
+    } catch (err) {
+      console.error('初始化站点配置失败:', err);
+    }
+
     // 创建管理员
     const admin: Agent = {
       id: 'admin',
